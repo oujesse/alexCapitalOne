@@ -282,11 +282,48 @@ function loanStratTimeLineInterest(accountID, income, necessaryExpenses, savings
         for (var i = 0; i < sortedLoans.length; i++){
           tempTotalLoanAmount += sortedLoans[i][1];
         }
+        //indicates if the loan can't be paid with the current conditions
+        if (totalLoanAmount <= tempTotalLoanAmount) {
+          resolve(['Loan will never reach 0'])
+        }
         totalLoanAmount = tempTotalLoanAmount;
         count++;
       }
       loanRecord[count] = totalLoanAmount;
       resolve(loanRecord);
+    });
+  });
+}
+
+//returns list of loans after a number of months if left unpaid, returns total loans after months unpaid
+//output: [{loanID: finaLoan}, totalFinalLoan]
+function futureLoansWithInterest(accountID, numberOfMonths, interest){
+  var loans;
+  //[["loan2._id", 45(amountToPay), 4(monthlyPayment)], [“loan1._id”, 30, 7], [“loan3._id”, 3, 12], ...]
+  var sortedLoans = [];
+  return new Promise(function(resolve, reject) {
+    void request.get('http://api.reimaginebanking.com/accounts/' + accountID + '/loans?key=61d12d8622f5ed2f9f6db6e0b014c0d5').buffer(true).end(function(err,res){
+      loans = JSON.parse(res.text);
+      //loops through to add all loans and their amount/monthlyPayment
+      for (var i = 0; i < loans.length; i++){
+        sortedLoans[i] = [loans[i]["_id"], loans[i]["amount"], loans[i]["monthly_payment"]];
+      }
+      //recursive loop until reached numberOfMonths
+      for(var i = 0; i < numberOfMonths; i++){
+        //update each loanAmount
+        for (var j = 0; j < sortedLoans.length; j++){
+          sortedLoans[j][1] = sortedLoans[j][1] * (1 + interest);
+        }
+      }
+      //makes the dictionary containing the loans of the final month
+      //also calculates the total final loan
+      totalFinalLoan = 0;
+      finalLoans = {};
+      for (var i = 0; i < sortedLoans.length; i++) {
+        finalLoans[sortedLoans[i][0]] = sortedLoans[i][1];
+        totalFinalLoan += sortedLoans[i][1];
+      }
+      resolve([finalLoans, totalFinalLoan]);
     });
   });
 }
@@ -297,5 +334,6 @@ function loanStratTimeLineInterest(accountID, income, necessaryExpenses, savings
    loanStrategy,
    loanStratTimeLine,
    loanStrategyInterest,
-   loanStratTimeLineInterest
+   loanStratTimeLineInterest,
+   futureLoansWithInterest
  }

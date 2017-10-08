@@ -15,10 +15,13 @@ loanAnalysis.request.get('http://api.reimaginebanking.com/accounts/59d86e85a73e4
     console.log(result1);
     loanAnalysis.loanStratTimeLine('59d86e85a73e4942cdafdf8e', 30000, 10000, 5000, 12525).then(function(result2) {
       console.log(result2);
-      loanAnalysis.loanStrategyInterest('59d86e85a73e4942cdafdf8e', 30000, 10000, 5000, 12525, .03).then(function(result3) {
+      loanAnalysis.loanStrategyInterest('59d86e85a73e4942cdafdf8e', 30000, 10000, 5000, 12525, .1).then(function(result3) {
         console.log(result3);
-        loanAnalysis.loanStratTimeLineInterest('59d86e85a73e4942cdafdf8e', 30000, 10000, 5000, 12525, .03).then(function(result4) {
+        loanAnalysis.loanStratTimeLineInterest('59d86e85a73e4942cdafdf8e', 30000, 10000, 5000, 12525, .1).then(function(result4) {
           console.log(result4);
+          loanAnalysis.futureLoansWithInterest('59d86e85a73e4942cdafdf8e', 1, .1).then(function(result5) {
+            console.log(result5);
+          });
         });
       });
     });
