@@ -132,6 +132,8 @@ function loanStratTimeLine(accountID, income, necessaryExpenses, savings, buffer
       while (totalLoanAmount != 0){
         loanRecord[count] = totalLoanAmount;
         sortedLoans = loanStrategyHelper(sortedLoans, loansBudget)[2];
+        //cant take into account savings - buffersavings because we already used up all the savings we coud with that first recursive call
+        loansBudget = income - necessaryExpenses;
         var tempTotalLoanAmount = 0;
         for (var i = 0; i < sortedLoans.length; i++){
           tempTotalLoanAmount += sortedLoans[i][1];
@@ -274,6 +276,8 @@ function loanStratTimeLineInterest(accountID, income, necessaryExpenses, savings
       while (totalLoanAmount != 0){
         loanRecord[count] = totalLoanAmount;
         sortedLoans = loanStrategyHelperInterest(sortedLoans, loansBudget, interest)[2];
+        //cant take into account savings - buffersavings because we already used up all the savings we coud with that first recursive call
+        loansBudget = income - necessaryExpenses;
         var tempTotalLoanAmount = 0;
         for (var i = 0; i < sortedLoans.length; i++){
           tempTotalLoanAmount += sortedLoans[i][1];
